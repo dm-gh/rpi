@@ -1,0 +1,5 @@
+#!/bin/bash
+# rpie: tap exits screensaver. foot turns touch into mouse click; mouse reporting
+# sends it to stdin, where omarchy-screensaver's `read -n1` exits on any input.
+printf '\e[?1000h'
+exec "${OMARCHY_PATH:-/usr/share/omarchy}/bin/omarchy-screensaver" "$@"

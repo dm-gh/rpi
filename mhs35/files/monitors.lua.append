@@ -1,0 +1,23 @@
+
+-- MHS-3.5" SPI screen. Panel rotates itself (overlay rotation=180), so no compositor transform.
+-- mipi-dbi mode has no pixel clock (reports 0.007Hz) and Hyprland paces frames by it; force 30Hz
+hl.monitor({ output = "SPI-1", mode = "480x320@30", position = "auto", scale = 1 })
+-- vc4 first or Aquamarine may pick SPI panel (no GPU) as primary. Only when panel probed.
+local mhs35 = io.open("/dev/dri/mhs35-card")
+if mhs35 then
+  mhs35:close()
+  hl.env("AQ_DRM_DEVICES", "/dev/dri/vc4-card:/dev/dri/mhs35-card")
+  -- Omarchy floats are fixed 875x600; shrink to fit 480x320
+  o.window({ tag = "floating-window" }, { size = { "(monitor_w*0.96)", "(monitor_h*0.9)" } })
+  -- Cap every float (app rules like localsend 1100x700, big client requests) to panel minus bar
+  o.window({ float = true }, { max_size = { 460, 288 }, center = true })
+end
+-- Touch stays raw portrait; 1 = vendor 99-calibration.conf-mhs35-90 mapping. Try 3 if mirrored.
+hl.config({ input = { touchdevice = { output = "SPI-1", transform = 1 } } })
+
+-- rpie overrides (tap-exit screensaver); envs.lua puts $OMARCHY_PATH/bin first, so prepend ours
+local rpie_bin = os.getenv("HOME") .. "/.local/share/rpie/bin"
+local path = os.getenv("PATH") or ""
+if not path:find(rpie_bin, 1, true) then
+  hl.env("PATH", rpie_bin .. ":" .. path)
+end

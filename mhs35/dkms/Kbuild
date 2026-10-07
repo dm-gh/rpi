@@ -1,0 +1,2 @@
+# Unmodified upstream v7.2.9 sources; ALARM linux-aarch64 ships none of these
+obj-m := drm_mipi_dbi.o ili9486.o ads7846.o

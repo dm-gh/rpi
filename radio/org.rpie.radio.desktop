@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Radio
+Comment=Internet radio
+Exec=radio
+Icon=audio-x-generic
+Categories=Audio;AudioVideo;

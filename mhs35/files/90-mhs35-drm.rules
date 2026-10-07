@@ -1,0 +1,3 @@
+# Stable names so Hyprland can keep vc4 as primary GPU
+SUBSYSTEM=="drm", KERNEL=="card*", DRIVERS=="vc4-drm", SYMLINK+="dri/vc4-card"
+SUBSYSTEM=="drm", KERNEL=="card*", DRIVERS=="ili9486", SYMLINK+="dri/mhs35-card"

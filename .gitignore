@@ -1,0 +1,8 @@
+# big or re-downloadable
+LCD-show/
+omarchy/
+media/
+mhs35/out/
+mhs35/screenshots/
+.DS_Store
+__pycache__/

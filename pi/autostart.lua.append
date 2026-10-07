@@ -1,0 +1,5 @@
+
+-- rpie: radio desktop icon
+o.launch_on_start("quickshell -p /home/dm/.config/quickshell/desktop-icons")
+-- rpie: radio always running so speaker power-on resumes music
+o.launch_on_start("/home/dm/.local/bin/radio")

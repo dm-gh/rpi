@@ -1,0 +1,63 @@
+// MHS-3.5" (ILI9486 + XPT2046) for mainline kernel. Pins/calibration from LCD-show mhs35-overlay.
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2711";
+
+	fragment@0 {
+		target = <&gpio>;
+		__overlay__ {
+			mhs35_spi0_pins: mhs35-spi0-pins {
+				brcm,pins = <9 10 11>;
+				brcm,function = <4>; /* alt0 */
+			};
+			mhs35_spi0_cs_pins: mhs35-spi0-cs-pins {
+				brcm,pins = <8 7>;
+				brcm,function = <1>; /* output */
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&spi>;
+		__overlay__ {
+			pinctrl-names = "default";
+			pinctrl-0 = <&mhs35_spi0_pins &mhs35_spi0_cs_pins>;
+			// native CS lookup hardcodes "pinctrl-bcm2835", Pi 4 chip is "pinctrl-bcm2711" -> -EPROBE_DEFER
+			cs-gpios = <&gpio 8 1>, <&gpio 7 1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			display@0 {
+				// waveshare compat = 16-bit regs over 8-bit SPI, same as vendor regwidth=16
+				compatible = "waveshare,rpi-lcd-35", "ilitek,ili9486";
+				reg = <0>;
+				// vendor runs 115MHz; raise if stable
+				spi-max-frequency = <32000000>;
+				dc-gpios = <&gpio 24 0>;
+				// mipi_dbi ends reset at logical 1, so active-high
+				reset-gpios = <&gpio 25 0>;
+				// DRM 0 = landscape (MADCTL 0xE0); 180 = MADCTL 0x20 = vendor rotate=90. 0 if upside down
+				rotation = <180>;
+			};
+
+			touchscreen@1 {
+				compatible = "ti,ads7846";
+				reg = <1>;
+				spi-max-frequency = <2000000>;
+				interrupt-parent = <&gpio>;
+				interrupts = <17 2>;
+				pendown-gpio = <&gpio 17 1>;
+				ti,x-plate-ohms = /bits/ 16 <60>;
+				ti,pressure-max = /bits/ 16 <255>;
+				// 99-calibration.conf-mhs35-0
+				ti,x-min = /bits/ 16 <268>;
+				ti,x-max = /bits/ 16 <3880>;
+				ti,y-min = /bits/ 16 <227>;
+				ti,y-max = /bits/ 16 <3936>;
+			};
+		};
+	};
+};
