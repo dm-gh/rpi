@@ -152,7 +152,7 @@ def with_online(name_label, text="● Online"):
 # mode button shows current view
 MODES = ["auto", "list", "offline"]
 MODE_ICON = {"auto": "audio-x-generic-symbolic", "list": "view-list-symbolic",
-             "offline": "folder-music-symbolic"}
+             "offline": "folder-symbolic"}
 
 
 class Radio(Gtk.Application):
