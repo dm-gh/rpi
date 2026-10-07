@@ -14,10 +14,22 @@ touch internet radio playing to a Bluetooth speaker (Marshall Emberton III).
    (Raspberry Pi Imager format: user, hashed password, Wi-Fi, SSH key). Without it the first
    boot waits on an interactive form on HDMI tty1. Validator: `/usr/bin/omarchy-rpi4-imager-preseed`
    inside the image. SSH key used: `~/.ssh/rpie`.
-3. **Customisations**: `pi/install.sh` (idempotent; copies radio, configs, offline music).
-4. **Speaker**: pair once with `bluetoothctl` (scan on / pair / trust / connect) *after*
+3. **SSH alias** in `~/.ssh/config` (install.sh uses it). Mux matters: Pi's ufw
+   `LIMIT`s port 22 (6 new connections / 30 s), polling loops otherwise lock you out:
+   ```
+   Host rpie
+     HostName rpie.local
+     User dm
+     IdentityFile ~/.ssh/rpie
+     AddressFamily inet
+     ControlMaster auto
+     ControlPath ~/.ssh/cm-%r@%h:%p
+     ControlPersist 10m
+   ```
+4. **Customisations**: `pi/install.sh` (idempotent; copies radio, configs, offline music).
+5. **Speaker**: pair once with `bluetoothctl` (scan on / pair / trust / connect) *after*
    install.sh set `AlwaysPairable`, otherwise no link key is stored.
-5. **Offline music**: `media/<station>/` on the Mac is the source of truth (git-ignored).
+6. **Offline music**: `media/<station>/` on the Mac is the source of truth (git-ignored).
    Re-download with yt-dlp, see "Offline stations".
 
 ## Layout
@@ -64,7 +76,7 @@ touch internet radio playing to a Bluetooth speaker (Marshall Emberton III).
   Fix: `AlwaysPairable = true` in `/etc/bluetooth/main.conf`, then re-pair.
 - Auto-login: `/etc/sddm.conf.d/20-autologin.conf` (session `omarchy.desktop`);
   idle lock off via `omarchy-toggle-idle stay-awake`.
-- SSH from Mac: use `-4`; `rpie.local` resolves to IPv6 addresses that aren't routable.
+- SSH from Mac: IPv4 only (`rpie.local` IPv6 addresses not routable); ufw rate-limits port 22.
 - macOS can't write raw disks from the Claude/terminal-app sandbox; flash from a real terminal.
 - `dm` had passwordless sudo during setup (`/etc/sudoers.d/10-dm-nopasswd`); remove when done.
 
