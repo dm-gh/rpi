@@ -74,6 +74,8 @@ touch internet radio playing to a Bluetooth speaker (Marshall Emberton III).
   `hyprctl dispatch` takes Lua too.
 - BlueZ default `Pairable: no` → pairing stores no link key → speaker forgotten each reboot.
   Fix: `AlwaysPairable = true` in `/etc/bluetooth/main.conf`, then re-pair.
+- No keyboard: notifications DND on (`omarchy-shell notifications setDnd true`; update/keybinding
+  banners otherwise sticky), bar ✕ button closes active window.
 - Auto-login: `/etc/sddm.conf.d/20-autologin.conf` (session `omarchy.desktop`);
   idle lock off via `omarchy-toggle-idle stay-awake`.
 - SSH from Mac: IPv4 only (`rpie.local` IPv6 addresses not routable); ufw rate-limits port 22.
@@ -81,6 +83,7 @@ touch internet radio playing to a Bluetooth speaker (Marshall Emberton III).
 - `dm` had passwordless sudo during setup (`/etc/sudoers.d/10-dm-nopasswd`); remove when done.
 
 **Radio app**
+- Boot starts paused (intent not restored); last station + offline position are.
 - Plays only while default sink is `bluez_output.*` (polled every 3 s). Speaker off →
   stops streaming, keeps intent; speaker on → resumes. User stop is sticky.
 - State in `~/.local/state/rpie-radio.json`: last station, intent, offline positions

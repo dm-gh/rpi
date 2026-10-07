@@ -15,17 +15,23 @@ a=~/.config/hypr/autostart.lua
 sed -i '/desktop-icons\|\/.local\/bin\/radio\|^-- Radio\|^-- rpie:/d' "$a"
 cat /tmp/autostart.lua.append >> "$a"
 
-# Omarchy bar: radio button next to menu
+# Omarchy bar: radio button + close-window escape hatch (no keyboard to close terminals)
 python3 - <<'PY'
 import json, os
 p = os.path.expanduser("~/.config/omarchy/shell.json"); c = json.load(open(p))
+mods = [m for ms in c["bar"]["layout"].values() for m in ms]
+big = {"type": "command", "fontSize": 18, "horizontalMargin": 14, "keepSpace": True}
 # only if absent: bar widgets can be dragged to other sections
-if not any(m.get("id") == "radio" for mods in c["bar"]["layout"].values() for m in mods):
-    c["bar"]["layout"]["left"].append(
-        {"id": "radio", "type": "command", "text": "\U000F0439", "fontSize": 18,
-         "horizontalMargin": 14, "keepSpace": True, "tooltip": "Radio", "onClick": "radio"})
-    json.dump(c, open(p, "w"), indent=2, ensure_ascii=False)
+if not any(m.get("id") == "radio" for m in mods):
+    c["bar"]["layout"]["left"].append(dict(big, id="radio", text="\U000F0439", tooltip="Radio", onClick="radio"))
+if not any(m.get("id") == "close-window" for m in mods):
+    c["bar"]["layout"]["right"].append(dict(big, id="close-window", text="\U000F0156", tooltip="Close window",
+        onClick="hyprctl dispatch 'hl.dsp.window.close()'"))
+json.dump(c, open(p, "w"), indent=2, ensure_ascii=False)
 PY
+
+# no popups (update/keybinding banners need keyboard); own-action toasts still show
+OMARCHY_PATH=/usr/share/omarchy XDG_RUNTIME_DIR=/run/user/$(id -u) omarchy-shell notifications setDnd true >/dev/null || true
 
 # screensaver yes, lock never (unlock needs keyboard). 2e6 s: QML timer ms must fit int32
 python3 - <<'PY'

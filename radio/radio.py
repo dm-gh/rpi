@@ -376,8 +376,7 @@ class Radio(Gtk.Application):
             self.cur = names.index(st["cur"])
         if st.get("last") in names:
             self.last = names.index(st["last"])
-        if st.get("want") in names:
-            self.want = names.index(st["want"])
+        # want not restored: boot starts paused; speaker auto-resume only within a session
         self.resume = st.get("resume", {})
 
     def save_state(self):
