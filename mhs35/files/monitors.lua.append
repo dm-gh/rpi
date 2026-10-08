@@ -14,10 +14,3 @@ if mhs35 then
 end
 -- Touch stays raw portrait; 1 = vendor 99-calibration.conf-mhs35-90 mapping. Try 3 if mirrored.
 hl.config({ input = { touchdevice = { output = "SPI-1", transform = 1 } } })
-
--- rpie overrides (tap-exit screensaver); envs.lua puts $OMARCHY_PATH/bin first, so prepend ours
-local rpie_bin = os.getenv("HOME") .. "/.local/share/rpie/bin"
-local path = os.getenv("PATH") or ""
-if not path:find(rpie_bin, 1, true) then
-  hl.env("PATH", rpie_bin .. ":" .. path)
-end

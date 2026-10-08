@@ -33,7 +33,7 @@ PY
 # no popups (update/keybinding banners need keyboard); own-action toasts still show
 OMARCHY_PATH=/usr/share/omarchy XDG_RUNTIME_DIR=/run/user/$(id -u) omarchy-shell notifications setDnd true >/dev/null || true
 
-# screensaver yes, lock never (unlock needs keyboard). 2e6 s: QML timer ms must fit int32
+# lock never (unlock needs keyboard). 2e6 s: QML timer ms must fit int32
 python3 - <<'PY'
 import json, os
 p = os.path.expanduser("~/.config/omarchy/shell.json"); c = json.load(open(p))
@@ -41,8 +41,9 @@ c.setdefault("idle", {})["lock"] = 2000000
 json.dump(c, open(p, "w"), indent=2, ensure_ascii=False)
 PY
 omarchy-toggle-idle allow-idle >/dev/null
-# tap exits screensaver; dir prepended to PATH in monitors.lua
-install -D -m755 /tmp/omarchy-screensaver ~/.local/share/rpie/bin/omarchy-screensaver
+# no screensaver: touch can't dismiss it (terminal app, keyboard only)
+mkdir -p ~/.local/state/omarchy/toggles && touch ~/.local/state/omarchy/toggles/screensaver-off
+rm -rf ~/.local/share/rpie/bin  # old tap-exit wrapper attempt
 
 # boot straight to desktop
 sudo install -m644 /tmp/20-autologin.conf /etc/sddm.conf.d/20-autologin.conf

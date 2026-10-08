@@ -77,7 +77,8 @@ touch internet radio playing to a Bluetooth speaker (Marshall Emberton III).
 - No keyboard: notifications DND on (`omarchy-shell notifications setDnd true`; update/keybinding
   banners otherwise sticky), bar ✕ button closes active window.
 - Auto-login: `/etc/sddm.conf.d/20-autologin.conf` (session `omarchy.desktop`);
-  idle lock off via `omarchy-toggle-idle stay-awake`.
+  lock pushed to ~23 days (`idle.lock` in shell.json, reread only at shell start);
+  screensaver off (`~/.local/state/omarchy/toggles/screensaver-off`): it's a terminal app, touch can't dismiss it.
 - SSH from Mac: IPv4 only (`rpie.local` IPv6 addresses not routable); ufw rate-limits port 22.
 - macOS can't write raw disks from the Claude/terminal-app sandbox; flash from a real terminal.
 - `dm` had passwordless sudo during setup (`/etc/sudoers.d/10-dm-nopasswd`); remove when done.
